@@ -8,7 +8,7 @@
 # file description: this file contains functions to
 #                   organize files according to their
 #                   types.
-# Date: 3/6/2024
+# Date: 7/3/2024
 ######################################################
 
 
@@ -177,7 +177,7 @@ function fileOrganizer(){
         
         # calling -> fileTypeExtractor <- function and giving it 
         # the path of the file to know its type
-        fileTypeExtractor "${filePath}"
+        fileTypeExtractor "${fileName}"
 
         # holding the return of the function: fileTypeExtractor
         fileType=$?

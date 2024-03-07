@@ -1,4 +1,4 @@
-#! /usr/bin/bash
+#! /usr/bin/bash -i
 
 ######################################################
 # Name: Youssef Khaled Ahmed Zayed
@@ -7,7 +7,7 @@
 # file name: TASK1_main
 # file description: this file tests the functionality
 #                   of oranizing file system.
-# Date: 3/6/2024
+# Date: 7/3/2024
 ######################################################
 
 
@@ -21,6 +21,13 @@ fileOrganizationFuncsPath="${current_directory/\/\ /"\ "}/file_organization"
 
 # sourcing the file that holds the file organization functions.
 source "${fileOrganizationFuncsPath}"
+
+
+# global variable to hold the source directory path.
+declare SourceDir
+
+# global variable to hold the download directory path.
+declare DownloadDir
 
 
 # name: filesCreation
@@ -50,50 +57,50 @@ function filesCreation(){
 
 # 1. ./Download/
     # checks if Downloads directory exists or not
-    if ! test -d ./Downloads/;then
+    if ! test -d "${DownloadDir}";then
         # if Downloads/ doesn't exist then make one
-        mkdir ./Downloads/ ./Downloads/txt/ ./Downloads/jpg/ ./Downloads/pdf/ ./Downloads/misc/
+        mkdir "${DownloadDir}" "${DownloadDir}/txt" "${DownloadDir}/jpg" "${DownloadDir}/pdf" "${DownloadDir}/misc"
     fi
 
 # 2. ./Source/
     # checks if Source directory exists or not
-    if ! test -d ./Source/;then
+    if ! test -d "${SourceDir}";then
         # if Source/ doesn't exist then make one.
-        mkdir ./Source/
+        mkdir "${SourceDir}"
     fi
 # 3. ./Source/file1.txt 
     # checks if ./Source/file1.txt file exists or not
-    if ! test -e ./Source/file1.txt;then
+    if ! test -e "${SourceDir}/file1.txt";then
         # if not then make one.
-        touch ./Source/file1.txt
+        touch "${SourceDir}/file1.txt"
     fi
 
 # 4. ./Source/file2.jpg
     # checks if ./Source/file2.jpg file exists or not
-    if ! test -e ./Source/file2.jpg;then
+    if ! test -e "${SourceDir}/file2.jpg";then
         # if not then make one
-        touch ./Source/file2.jpg
+        touch "${SourceDir}/file2.jpg"
     fi
 
 # 5. ./Source/file3.pdf
     # checks if ./Source/file3.pdf file exists or not
-    if ! test -e ./Source/file3.pdf;then
+    if ! test -e "${SourceDir}/file3.pdf";then
         # if not then make one
-        touch ./Source/file3.pdf
+        touch "${SourceDir}/file3.pdf"
     fi
 
 # 6. ./Source/file4.csv
     # checks if ./Source/file4.csv file exists or not
-    if ! test -e ./Source/file4.csv;then
+    if ! test -e "${SourceDir}/file4.csv";then
         # if not then make one
-        touch ./Source/file4.csv
+        touch "${SourceDir}/file4.csv"
     fi
 
 # 7. ./Source/file5
     # checks if ./Source/file5 file exists or not
-    if ! test -e ./Source/file5;then
+    if ! test -e "${SourceDir}/file5";then
         # if not then make one
-        touch ./Source/file5
+        touch "${SourceDir}/file5"
     fi
 }
 
@@ -103,11 +110,6 @@ function filesCreation(){
 # args: none
 # return: none
 function TASK1_test(){
-    # 1. local variable to hold the source directory path.
-    local sourceDirPath
-
-    # 2. local variable to hold the destination directory path.
-    local DestDirPath
 
     # printing a descriptive sentence to the user.
     echo "this is a function to test task1:"
@@ -121,18 +123,10 @@ function TASK1_test(){
             break
         # if the selected is "run"
         elif [ ${userInput} = "run" ];then
-            
-            # assign the sourceDirPath variable with the
-            # source dir. path. 
-            sourceDirPath="/home/khaled/Desktop/Embedded Linux/Module_1/vscode_programs/Bash scripts/Bash_task1/Source"
-            
-            # assign the DestDirPath variable with the
-            # destination dir. path.
-            DestDirPath="/home/khaled/Desktop/Embedded Linux/Module_1/vscode_programs/Bash scripts/Bash_task1/Downloads"
-            
+           
             # call fileOrganizer to organize the files 
             # in the appropriate directories.
-            fileOrganizer "${sourceDirPath}" "${DestDirPath}"
+            fileOrganizer "${SourceDir}" "${DownloadDir}"
             
             # break as we want to run these instructions once
             # (i.e., if the selected is run then run once)
@@ -141,14 +135,28 @@ function TASK1_test(){
     done 
 }
 
-# remove ./Source/ directory and its contents.
-rm -r ./Source/
+# read the source directory from the user.
+read -rp "please enter the source directory:" SourceDir
 
-# remoove ./Downloads/ directoru and its contents.
-rm -r ./Downloads/
+# read the destination directory from the user.
+read -rp "please enter the Download directory:" DownloadDir
+
+
+# checks if Source directory exists or not
+if [ -d "${SourceDir}" ];then
+    # remove ./Source/ directory and its contents.
+    rm -r "${SourceDir}"
+fi
+
+# checks if Downloads directory exists or not
+if [ -d "${DownloadDir}" ];then
+    # remove ./Downloads/ directory and its contents.
+    rm -r "${DownloadDir}"
+fi
+
 
 # calling filesCreation function to create the desired files
-filesCreation
+filesCreation 
 
 # calling TASK1_test function to test this task
-TASK1_test
+TASK1_test 
