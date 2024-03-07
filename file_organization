@@ -1,0 +1,221 @@
+#! /usr/bin/bash
+
+######################################################
+# Name: Youssef Khaled Ahmed Zayed
+# Batch: 5_Hazem Khaled
+# Group: 1
+# file name: file_organization
+# file description: this file contains functions to
+#                   organize files according to their
+#                   types.
+# Date: 7/3/2024
+######################################################
+
+
+# global variables:
+# 1. FILE_TYPE_pdf: this is the value that represents 
+#                   a .pdf file type.
+FILE_TYPE_pdf=1
+# 2. FILE_TYPE_jpg: this is the value that represents 
+#                   a .jpg file type.
+FILE_TYPE_jpg=2
+# 3. FILE_TYPE_txt: this is the value that represents 
+#                   a .txt file type.
+FILE_TYPE_txt=3
+# 4. FILE_TYPE_unknown: this is the value that represents 
+#                       an unknown file type
+FILE_TYPE_unknown=4
+
+
+# name: fileTypeExtractor
+# description: this function extracts the extension type of the 
+#              passed file.
+# args: file name
+# return: file type
+function fileTypeExtractor(){
+    # declaring local variables:
+    # 1. fileName: the passed string which contains the 
+    #              file name.
+    local fileName=$1
+
+    # 2. flag: raised when '.' is found
+    local flag=false
+
+    # 3. fileType: is the varibles that holds the result
+    #              of this function.
+    local fileType=${FILE_TYPE_unknown}
+
+    # for loop to loop over the passed string(i.e., file name).
+    for (( i=0 ; i<${#fileName} ; i++ )); do
+        
+        # checking if this character is '.' as after this '.'
+        # will be the extension.
+        if [ "${fileName:${i}:1}" = '.' ];then
+        # setting the flag variable to indicate that we found the '.'
+        flag=true
+        # continue as we don't want to apply the rest of the function
+        # logic on this char where the only use of theis char '.' is
+        # to raise the falg which means that the next char indicated the 
+        # file type.
+        continue
+        fi
+
+        # checking if the flag is raised
+        if [ "${flag}" = true ];then
+
+            # checking whether this char, where it follows '.', is
+            # 1. 'p' --> pdf
+            # 2. 'j' --> jpg
+            # 3. 't' --> txt
+            # or any other extension
+            case "${fileName:${i}:1}" in
+
+            # 1. case 'p' --> pdf
+            "p")
+
+            # assign the file type variable with the value ${FILE_TYPE_pdf}
+            # where: FILE_TYPE_pdf=1
+            fileType=${FILE_TYPE_pdf}
+
+            # clearing the flag as we need only one char after '.'.
+            flag=false
+
+            # break as we don't need to execute more as we got the result.
+            # this is for optimization.
+            break
+            ;;
+
+            # 2. case 'j' --> jpg
+            "j")
+
+            # assign the file type variable with the value ${FILE_TYPE_jpg}
+            # where: FILE_TYPE_jpg=2
+            fileType=${FILE_TYPE_jpg}
+            
+            # clearing the flag as we need only one char after '.'.
+            flag=false
+
+            # break as we don't need to execute more as we got the result.
+            # this is for optimization.
+            break
+            ;;
+
+            # 3. case 't' --> txt
+            "t")
+
+            # assign the file type variable with the value ${FILE_TYPE_txt}
+            # where: FILE_TYPE_jpg=3
+            fileType=${FILE_TYPE_txt}
+            
+            # clearing the flag as we need only one char after '.'.
+            flag=false
+
+            # break as we don't need to execute more as we got the result.
+            # this is for optimization.
+            break
+            ;;
+
+            # 4. default case if the above cases didn't come true.
+            *)
+
+            # assign the file type variable with the value ${FILE_TYPE_unknown}
+            # where: FILE_TYPE_unknown=4
+            fileType=${FILE_TYPE_unknown}
+            
+            # clearing the flag as we need only one char after '.'.
+            flag=false
+
+            # break as we don't need to execute more as we got the result.
+            # this is for optimization.
+            break
+            ;;
+            esac
+        fi
+    done
+
+    # return the result fileType
+    return "${fileType}"
+}
+
+# name: fileOrganizer
+# description: this function organizes the files in the 
+#              appropriate destination path
+# args: SourceDirPath -> path of the source directory where 
+#                        the files exist.
+#       DownloadDirPath -> path of the destination directory
+#                          where this directory contains
+#                          subdirectories: pdf/ , txt/ , jpg/ 
+#                                          , misc/
+# return: none
+function fileOrganizer(){
+    # declaring some local variables.
+    # 1. SourceDirPath: path of the source directory where 
+    #                   the files exist.
+    local SourceDirPath=$1
+
+    # 2. DownloadDirPath: path of the destination directory
+    #                     where this directory contains
+    #                     subdirectories: pdf/ , txt/ , jpg/ 
+    #                                     , misc/
+    local DownloadDirPath=$2
+
+    # 3. fileType: variable to hold the return of fileTypeExtractor 
+    #              function (i.e., file type).
+    local fileType
+
+    # 4. fileName: variable to hold the name and extension of a file
+    #              ex.: fileName=file1.txt
+    local fileName
+
+    # for loop to loop over the files in the source directory
+    for filePath in "${SourceDirPath}"/*
+    do
+        # saving just the name of the file in the fileName
+        # variable -> basename ./path/to/file1.txt
+        #             output -> file1.txt.
+        fileName=$(basename "${filePath}")
+        
+        # calling -> fileTypeExtractor <- function and giving it 
+        # the path of the file to know its type
+        fileTypeExtractor "${filePath}"
+
+        # holding the return of the function: fileTypeExtractor
+        fileType=$?
+
+        # checking whether file type is one of the following:
+        # 1. 'p' --> pdf, store in .../Downloads/pdf/
+        # 2. 'j' --> jpg, store in .../Downloads/jpg/
+        # 3. 't' --> txt, store in .../Downloads/txt/
+        # or any other extension, store in .../Downloads/misc
+        case ${fileType} in
+
+        # 1. case 'p' --> pdf
+        "${FILE_TYPE_pdf}")
+
+        # move the file to the .../Downloads/pdf
+        mv "${filePath}" "${DownloadDirPath}/pdf"
+        ;;
+
+        # 2. case 'j' --> jpg
+        "${FILE_TYPE_jpg}")
+
+        # move the file to the .../Downloads/jpg
+        mv "${filePath}" "${DownloadDirPath}/jpg"
+        ;;
+
+        # 3. case 't' --> txt
+        "${FILE_TYPE_txt}")
+
+        # move the file to the .../Downloads/txt
+        mv "${filePath}" "${DownloadDirPath}/txt"
+        ;;
+
+        # 4. default case if the above cases didn't come true.
+        *)
+
+        # move the file to the .../Downloads/misc
+        mv "${filePath}" "${DownloadDirPath}/misc"
+        ;;
+        esac
+    done
+}

@@ -1,0 +1,154 @@
+#! /usr/bin/bash
+
+######################################################
+# Name: Youssef Khaled Ahmed Zayed
+# Batch: 5_Hazem Khaled
+# Group: 1
+# file name: TASK1_main
+# file description: this file tests the functionality
+#                   of oranizing file system.
+# Date: 7/3/2024
+######################################################
+
+
+
+# reading the current directory path
+current_directory=$(readlink -f .)
+
+# replacing ' ' with "\ " to be able to source the file
+# ex.: ./Embedded Linux/... ---> ./Embedded\ Linux/...
+fileOrganizationFuncsPath="${current_directory/\/\ /"\ "}/file_organization"
+
+# sourcing the file that holds the file organization functions.
+source "${fileOrganizationFuncsPath}"
+
+
+# name: filesCreation
+# description: this function can be used to create 
+#              the following directories:
+#               Downloads/
+#               |-- txt/
+#               |   |-- file1.txt
+#               |-- jpg/
+#               |   |-- file2.jpg
+#               |-- pdf/
+#               |   |-- file3.pdf
+#               |-- misc/
+#               |   |-- file4.csv
+#               |   |-- file5
+# and 
+#               Source/
+#               |-- file1.txt
+#               |-- file2.jpg
+#               |-- file3.pdf
+#               |-- file4.csv
+#               |-- file5
+#      
+# args: none
+# return: none
+function filesCreation(){
+
+# 1. ./Download/
+    # checks if Downloads directory exists or not
+    if ! test -d ./Downloads/;then
+        # if Downloads/ doesn't exist then make one
+        mkdir ./Downloads/ ./Downloads/txt/ ./Downloads/jpg/ ./Downloads/pdf/ ./Downloads/misc/
+    fi
+
+# 2. ./Source/
+    # checks if Source directory exists or not
+    if ! test -d ./Source/;then
+        # if Source/ doesn't exist then make one.
+        mkdir ./Source/
+    fi
+# 3. ./Source/file1.txt 
+    # checks if ./Source/file1.txt file exists or not
+    if ! test -e ./Source/file1.txt;then
+        # if not then make one.
+        touch ./Source/file1.txt
+    fi
+
+# 4. ./Source/file2.jpg
+    # checks if ./Source/file2.jpg file exists or not
+    if ! test -e ./Source/file2.jpg;then
+        # if not then make one
+        touch ./Source/file2.jpg
+    fi
+
+# 5. ./Source/file3.pdf
+    # checks if ./Source/file3.pdf file exists or not
+    if ! test -e ./Source/file3.pdf;then
+        # if not then make one
+        touch ./Source/file3.pdf
+    fi
+
+# 6. ./Source/file4.csv
+    # checks if ./Source/file4.csv file exists or not
+    if ! test -e ./Source/file4.csv;then
+        # if not then make one
+        touch ./Source/file4.csv
+    fi
+
+# 7. ./Source/file5
+    # checks if ./Source/file5 file exists or not
+    if ! test -e ./Source/file5;then
+        # if not then make one
+        touch ./Source/file5
+    fi
+}
+
+
+# name: TASK1_test
+# description: this function tests the other functions
+# args: none
+# return: none
+function TASK1_test(){
+    # 1. local variable to hold the source directory path.
+    local sourceDirPath
+
+    # 2. local variable to hold the destination directory path.
+    local DestDirPath
+
+    # printing a descriptive sentence to the user.
+    echo "this is a function to test task1:"
+
+    # selecting one of 2 inputs 
+    select userInput in run ignore
+    do
+        # if the selected is "ignore"
+        if [ ${userInput} = "ignore" ];then
+            # break this loop
+            break
+        # if the selected is "run"
+        elif [ ${userInput} = "run" ];then
+            
+            # assign the sourceDirPath variable with the
+            # source dir. path. 
+            sourceDirPath="/home/khaled/Desktop/Embedded Linux/Module_1/vscode_programs/Bash scripts/Bash_task1/Source"
+            
+            # assign the DestDirPath variable with the
+            # destination dir. path.
+            DestDirPath="/home/khaled/Desktop/Embedded Linux/Module_1/vscode_programs/Bash scripts/Bash_task1/Downloads"
+            
+            # call fileOrganizer to organize the files 
+            # in the appropriate directories.
+            fileOrganizer "${sourceDirPath}" "${DestDirPath}"
+            
+            # break as we want to run these instructions once
+            # (i.e., if the selected is run then run once)
+            break
+        fi
+    done 
+}
+
+# remove ./Source/ directory and its contents.
+rm -r ./Source/
+
+# remoove ./Downloads/ directoru and its contents.
+rm -r ./Downloads/
+
+# calling filesCreation function to create the desired files
+filesCreation
+
+# calling TASK1_test function to test this task
+TASK1_test
